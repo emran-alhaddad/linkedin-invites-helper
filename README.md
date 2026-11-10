@@ -26,7 +26,7 @@ Buttons appear inline on:
 ## Development
 - `manifest.json` (MV3)
 - `content.js` — injects panel, handles SPA routing, bulk actions
-- `styles.css` — animations & layout
+- `styles.css` — LinkedIn-style panel & toast
 - `icons/` — 16/48/128 PNGs
 
 ### Load unpacked (dev)
