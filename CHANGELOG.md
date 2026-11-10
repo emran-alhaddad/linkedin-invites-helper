@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+- Fix: panel disappeared for good when LinkedIn re-rendered the invitation list; it now comes back every time
+- Fix: re-checks the count once invitations load, if the first check ran too early
+
 ## 1.2.0
 - Uses LinkedIn's own invitations API (the calls the web app makes); clicking page buttons is now only a fallback
 - Handles any number of invitations: pages through all of them, skips ones LinkedIn rejects

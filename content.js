@@ -99,19 +99,22 @@
 
   // --- panel ---
   let busy = false, stopFlag = false;
+  // LinkedIn re-renders its list and deletes foreign nodes, so keep our own reference
+  // and a "should be visible" flag; sync() puts the panel back whenever it goes missing.
+  let panel = null, shown = false;
 
   function panelEl() {
-    let p = document.getElementById('lih-panel');
-    if (!p) {
-      p = document.createElement('div');
-      p.id = 'lih-panel';
-      p.setAttribute('role', 'region');
-      p.setAttribute('aria-live', 'polite');
-      p.innerHTML = '<span class="lih-summary"></span><span class="lih-actions"></span>';
-      p.addEventListener('click', onClick);
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'lih-panel';
+      panel.setAttribute('role', 'region');
+      panel.setAttribute('aria-live', 'polite');
+      panel.innerHTML = '<span class="lih-summary"></span><span class="lih-actions"></span>';
+      panel.addEventListener('click', onClick);
     }
-    return p;
+    return panel;
   }
+  function hide() { shown = false; panel?.remove(); }
 
   function render(text, buttons) {
     const p = panelEl();
@@ -124,6 +127,7 @@
     }
     p.classList.toggle('lih-busy', busy);
     p.hidden = false;
+    shown = true;
     place();
   }
 
@@ -140,10 +144,11 @@
     }
   }
 
-  let lastCount = -1, counting = false;
+  let lastCount = -1, counting = false, lastCheck = 0;
   async function refreshIdle() {
     if (busy || counting) return;
     counting = true;
+    lastCheck = Date.now();
     try {
       const job = loadJob();
       if (job) {
@@ -154,7 +159,7 @@
       let n;
       try { n = await api().count(); } catch { n = await dom.count(); }
       lastCount = n;
-      if (!n) { document.getElementById('lih-panel')?.remove(); return; }
+      if (!n) { hide(); return; }
       render(T.pending(n), [['ignore', T.ignoreAll, 'tertiary'], ['accept', T.acceptAll, 'primary']]);
     } finally { counting = false; }
   }
@@ -223,9 +228,11 @@
   // route changes, late hydration and list updates.
   let lastHref = '', pending = false;
   function sync() {
-    if (!isTarget()) { if (!busy) document.getElementById('lih-panel')?.remove(); return; }
+    if (!isTarget()) { if (!busy) hide(); return; }
     if (location.href !== lastHref) { lastHref = location.href; refreshIdle(); }
-    if (document.getElementById('lih-panel')) place();
+    if (shown || busy) place();
+    // count came back 0 or failed before LinkedIn finished loading → re-check now that invitations are on the page
+    else if (document.querySelector(SEL_ITEM) && Date.now() - lastCheck > 10000) refreshIdle();
   }
   new MutationObserver(() => {
     if (pending) return;
