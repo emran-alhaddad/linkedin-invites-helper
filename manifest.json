@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "LinkedIn Invites Helper",
-  "version": "1.1.0",
-  "description": "Floating buttons to Accept or Ignore all invitations on LinkedIn.",
+  "version": "1.2.0",
+  "description": "Accept or ignore all your LinkedIn invitations in one click, at a safe human pace.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -15,7 +15,7 @@
         "https://www.linkedin.com/mynetwork/grow/*",
         "https://www.linkedin.com/mynetwork/invitation-manager/received/*"
       ],
-      "js": ["content.js"],
+      "js": ["core.js", "content.js"],
       "css": ["styles.css"],
       "run_at": "document_idle"
     }

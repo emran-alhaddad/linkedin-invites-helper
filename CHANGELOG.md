@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0
+- Uses LinkedIn's own invitations API (the calls the web app makes); clicking page buttons is now only a fallback
+- Handles any number of invitations: pages through all of them, skips ones LinkedIn rejects
+- Human pace: 2–5 s between actions, 1–2 min break every 50, max 1,500 a day
+- Backs off on rate limits (429/999), stops on sign-out, and stops at LinkedIn's 30,000-connection cap
+- Progress is saved, so large jobs continue after a reload or the next day
+- `node test/sim.js` simulates 5 / 500 / 50,000 invitations against a strict fake rate limiter
+
 ## 1.1.0
 - Fix: works again with LinkedIn's new invitation markup (matches by invitation URN + button aria-label)
 - Restyled to match LinkedIn: blue pill "Accept all", tertiary "Ignore all", native-looking toast

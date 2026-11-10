@@ -25,7 +25,9 @@ Buttons appear inline on:
 
 ## Development
 - `manifest.json` (MV3)
-- `content.js` — injects panel, handles SPA routing, bulk actions
+- `core.js` — engine: LinkedIn API calls, paging, pacing, back-off (no DOM)
+- `content.js` — panel, page-click fallback, saved progress
+- `test/sim.js` — `node test/sim.js` runs the engine against a fake LinkedIn (5 / 500 / 50,000)
 - `styles.css` — LinkedIn-style panel & toast
 - `icons/` — 16/48/128 PNGs
 
