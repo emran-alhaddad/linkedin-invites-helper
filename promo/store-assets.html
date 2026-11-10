@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Store assets</title>
+<!-- Rendered by promo/store-assets.cjs. Screenshots reuse promo.html frames (fake names only). -->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #ddd; }
+  .asset { position: relative; overflow: hidden; margin: 20px; }
+
+  /* 1280x800 screenshot: headline band + scaled promo frame */
+  .shot { width: 1280px; height: 800px; background: #0a66c2; }
+  .shot h2 { height: 80px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 34px; font-weight: 700; letter-spacing: -.3px; }
+  .shot .frame { position: absolute; left: 0; top: 80px; width: 1920px; height: 1080px; border: 0; transform: scale(.6667); transform-origin: 0 0; }
+
+  /* tiles */
+  .tile { background: #0a66c2; color: #fff; display: flex; align-items: center; }
+  .small { width: 440px; height: 280px; flex-direction: column; justify-content: center; text-align: center; gap: 14px; }
+  .small img { width: 84px; height: 84px; background: #fff; border-radius: 20px; padding: 8px; }
+  .small b { font-size: 30px; letter-spacing: -.5px; }
+  .small span { font-size: 18px; opacity: .92; }
+  .marquee { width: 1400px; height: 560px; padding-left: 90px; gap: 0; }
+  .marquee .txt { width: 560px; }
+  .marquee img { width: 110px; height: 110px; background: #fff; border-radius: 26px; padding: 10px; }
+  .marquee b { display: block; font-size: 58px; letter-spacing: -1.5px; margin-top: 28px; line-height: 1.05; }
+  .marquee p { font-size: 26px; opacity: .92; margin-top: 16px; line-height: 1.35; }
+  .marquee .shotbox { position: absolute; left: 700px; top: 70px; width: 800px; height: 450px; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+  .marquee .shotbox iframe { width: 1920px; height: 1080px; border: 0; transform: scale(.4167); transform-origin: 0 0; }
+</style>
+</head>
+<body>
+  <div class="asset shot" id="shot1" data-t="12.9"><h2>Accept or ignore every LinkedIn invitation in one click</h2><iframe class="frame" src="promo.html?render"></iframe></div>
+  <div class="asset shot" id="shot2" data-t="24.5"><h2>Confirm once. It handles the rest for you.</h2><iframe class="frame" src="promo.html?render"></iframe></div>
+  <div class="asset shot" id="shot3" data-t="34.2"><h2>Human pace and short breaks keep your account safe</h2><iframe class="frame" src="promo.html?render"></iframe></div>
+  <div class="asset shot" id="shot4" data-t="44"><h2>Thousands waiting? Up to 1,500 a day, then it continues tomorrow</h2><iframe class="frame" src="promo.html?render"></iframe></div>
+  <div class="asset shot" id="shot5" data-t="53"><h2>All done. No tracking, no servers. English and Arabic.</h2><iframe class="frame" src="promo.html?render"></iframe></div>
+
+  <div class="asset tile small" id="small"><img src="../icons/icon128.png" alt=""><b>LinkedIn Invites Helper</b><span>Accept or ignore all invitations in one click</span></div>
+  <div class="asset tile marquee" id="marquee">
+    <div class="txt"><img src="../icons/icon128.png" alt=""><b>LinkedIn Invites Helper</b><p>Accept or ignore every invitation in one click, at a safe human pace.</p></div>
+    <div class="shotbox"><iframe src="promo.html?render" data-t="31"></iframe></div>
+  </div>
+<script>
+  // Seek each embedded promo frame; hide its caption and the cursor (the headline replaces them).
+  window.ready = new Promise((done) => addEventListener('load', () => {
+    document.querySelectorAll('iframe').forEach((f) => {
+      const t = +(f.dataset.t || f.parentElement.dataset.t);
+      const w = f.contentWindow, d = f.contentDocument;
+      w.seek(t);
+      ['cap', 'cursor', 'ring'].forEach((id) => d.getElementById(id).style.display = 'none');
+    });
+    done();
+  }));
+</script>
+</body>
+</html>

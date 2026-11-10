@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LinkedIn Invites Helper promo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #f4f2ee; }
+  body { font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: rgba(0,0,0,.9); }
+  .abs { position: absolute; }
+
+  /* --- mock LinkedIn page --- */
+  #base { position: absolute; left: 0; top: 0; width: 1477px; height: 831px; overflow: hidden; }
+  #cam { position: absolute; inset: 0; }
+  .nav { height: 76px; background: #fff; border-bottom: 1px solid #e0dfdc; display: flex; align-items: center; justify-content: center; gap: 20px; }
+  .nav .wrap { width: 1300px; display: flex; align-items: center; gap: 18px; }
+  .nav .logo { width: 46px; height: 46px; border-radius: 8px; background: #0a66c2; }
+  .nav .search { width: 340px; height: 44px; border-radius: 6px; background: #edf3f8; }
+  .nav .sp { flex: 1; }
+  .nav .ic { width: 64px; display: flex; flex-direction: column; align-items: center; gap: 6px; color: rgba(0,0,0,.6); font-size: 14px; }
+  .nav .ic i { width: 28px; height: 28px; border-radius: 6px; background: #c9c9c9; display: block; }
+  .nav .ic.on { color: rgba(0,0,0,.9); }
+  .nav .ic.on i { background: rgba(0,0,0,.75); }
+  .page { width: 1300px; margin: 28px auto 0; display: flex; gap: 28px; align-items: flex-start; }
+  .card { background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,.08); }
+  .side { width: 300px; padding: 22px 0; }
+  .side h3 { font-size: 20px; font-weight: 600; padding: 0 22px 14px; }
+  .side .row { display: flex; justify-content: space-between; padding: 12px 22px; font-size: 18px; color: rgba(0,0,0,.6); }
+  .main { flex: 1; overflow: hidden; }
+  .main .head { padding: 22px 26px 0; font-size: 24px; font-weight: 600; }
+  .tabs { display: flex; gap: 28px; padding: 16px 26px 0; border-bottom: 1px solid #e8e8e8; font-size: 18px; font-weight: 600; color: rgba(0,0,0,.6); }
+  .tabs span { padding-bottom: 12px; }
+  .tabs .on { color: #01754f; border-bottom: 3px solid #01754f; }
+  .viewport { height: 700px; overflow: hidden; position: relative; }
+  .list { position: absolute; left: 0; right: 0; top: 0; }
+  .inv { height: 132px; display: flex; align-items: center; gap: 20px; padding: 0 26px; border-bottom: 1px solid #ececec; }
+  .av { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 28px; flex: none; }
+  .who { flex: 1; min-width: 0; }
+  .who b { font-size: 20px; font-weight: 600; }
+  .who b span { font-weight: 400; color: rgba(0,0,0,.6); }
+  .who p { font-size: 17px; color: rgba(0,0,0,.6); margin-top: 4px; }
+  .who small { font-size: 15px; color: rgba(0,0,0,.6); display: block; margin-top: 6px; }
+  .acts { display: flex; gap: 10px; }
+  .b { min-height: 40px; padding: 8px 22px; border-radius: 999px; font-size: 19px; font-weight: 600; border: 0; background: transparent; color: rgba(0,0,0,.6); font-family: inherit; }
+  .b.out { box-shadow: inset 0 0 0 1.5px #0a66c2; color: #0a66c2; }
+  .empty { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font-size: 22px; color: rgba(0,0,0,.6); }
+  .empty b { display: block; font-size: 28px; color: rgba(0,0,0,.9); margin-bottom: 8px; }
+
+  /* --- the extension's panel (same look as styles.css, scaled for 1080p) --- */
+  #panel { overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 26px; border-bottom: 1px solid rgba(0,0,0,.08); background: #fff; }
+  #panel .sum { font-size: 19px; font-weight: 600; color: rgba(0,0,0,.6); display: flex; align-items: center; }
+  #panel .btns { display: flex; gap: 10px; }
+  #panel .b.pri { background: #0a66c2; color: #fff; }
+  .spin { width: 18px; height: 18px; margin-right: 10px; border-radius: 50%; border: 3px solid rgba(0,0,0,.1); border-top-color: #0a66c2; display: none; }
+  .busy .spin { display: inline-block; }
+
+  /* --- overlays --- */
+  #hook, #end { position: absolute; inset: 0; background: #0a66c2; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  #hook .n { font-size: 210px; font-weight: 800; letter-spacing: -6px; line-height: 1; font-variant-numeric: tabular-nums; }
+  #hook .l1 { font-size: 64px; font-weight: 700; margin-top: 18px; }
+  #hook .l2 { font-size: 40px; opacity: .85; margin-top: 22px; }
+  #end img { width: 168px; height: 168px; border-radius: 34px; background: #fff; padding: 14px; }
+  #end h1 { font-size: 92px; font-weight: 800; margin-top: 40px; letter-spacing: -2px; }
+  #end p { font-size: 38px; opacity: .9; margin-top: 18px; }
+  #end .pill { margin-top: 48px; background: #fff; color: #0a66c2; font-size: 36px; font-weight: 700; padding: 18px 44px; border-radius: 999px; }
+
+  #cap { position: absolute; left: 50%; bottom: 56px; max-width: 1560px; transform: translateX(-50%); background: rgba(0,0,0,.84); color: #fff; font-size: 44px; font-weight: 700; padding: 22px 40px; border-radius: 22px; text-align: center; line-height: 1.25; white-space: nowrap; }
+  #lapse, #day { position: absolute; top: 108px; background: #fff; color: rgba(0,0,0,.85); font-size: 28px; font-weight: 700; padding: 14px 26px; border-radius: 999px; box-shadow: 0 6px 24px rgba(0,0,0,.16); }
+  #lapse { right: 60px; }
+  #day { left: 50%; transform: translateX(-50%); font-size: 40px; }
+  #safe { position: absolute; right: 60px; top: 190px; width: 540px; padding: 30px 34px; background: #fff; border-radius: 18px; box-shadow: 0 12px 48px rgba(0,0,0,.2); }
+  #safe h4 { font-size: 30px; margin-bottom: 18px; }
+  #safe li { list-style: none; display: flex; gap: 16px; align-items: flex-start; font-size: 25px; line-height: 1.3; padding: 10px 0; }
+  #safe li i { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #057642; color: #fff; display: grid; place-items: center; font-style: normal; font-size: 20px; font-weight: 800; margin-top: 1px; }
+  #dlg { position: absolute; left: 50%; top: 110px; width: 700px; transform: translateX(-50%); background: #fff; border-radius: 14px; padding: 30px 32px 24px; box-shadow: 0 16px 60px rgba(0,0,0,.35); font-size: 22px; }
+  #dlg h5 { font-size: 22px; font-weight: 600; margin-bottom: 14px; }
+  #dlg p { color: #333; line-height: 1.45; }
+  #dlg .r { display: flex; justify-content: flex-end; gap: 12px; margin-top: 26px; }
+  #dlg .r span { padding: 10px 28px; border-radius: 999px; font-weight: 600; box-shadow: inset 0 0 0 1px #c4c7c5; color: #0b57d0; }
+  #dlg .r .ok { background: #0b57d0; color: #fff; box-shadow: none; }
+  #toast { position: absolute; left: 60px; bottom: 200px; display: flex; gap: 18px; align-items: center; background: #fff; padding: 22px 30px; border-radius: 14px; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 10px 30px rgba(0,0,0,.2); font-size: 28px; font-weight: 700; }
+  #toast i { width: 40px; height: 40px; border-radius: 50%; background: #057642; color: #fff; display: grid; place-items: center; font-style: normal; font-size: 24px; }
+  #cursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; pointer-events: none; }
+  #ring { position: absolute; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; background: rgba(10,102,194,.35); }
+</style>
+</head>
+<body>
+<div id="base"><div id="cam">
+  <div class="nav"><div class="wrap">
+    <div class="logo"></div><div class="search"></div><div class="sp"></div>
+    <div class="ic"><i></i>Home</div><div class="ic on"><i></i>My Network</div><div class="ic"><i></i>Jobs</div><div class="ic"><i></i>Messaging</div><div class="ic"><i></i>Notifications</div>
+  </div></div>
+  <div class="page">
+    <div class="card side">
+      <h3>Manage my network</h3>
+      <div class="row"><span>Connections</span><span>4,557</span></div>
+      <div class="row"><span>Following &amp; followers</span></div>
+      <div class="row"><span>Groups</span><span>7</span></div>
+      <div class="row"><span>Events</span><span>7</span></div>
+      <div class="row"><span>Pages</span><span>400</span></div>
+    </div>
+    <div class="card main">
+      <div class="head">Invitations</div>
+      <div class="tabs"><span class="on">Received</span><span>Sent</span></div>
+      <div id="panel"><span class="sum"><span class="spin"></span><span id="sumtxt"></span></span><span class="btns" id="btns"></span></div>
+      <div class="viewport">
+        <div class="empty" id="empty"><div><b>No pending invitations</b>You're all caught up.</div></div>
+        <div class="list" id="list"></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div id="safe"><h4>Built to stay safe</h4><ul>
+  <li><i>✓</i>Human pace: 2–5 seconds between actions</li>
+  <li><i>✓</i>Short breaks every 50 invitations</li>
+  <li><i>✓</i>Max 1,500 a day to avoid LinkedIn limits</li>
+  <li><i>✓</i>Slows down by itself if LinkedIn pushes back</li>
+</ul></div>
+<div id="lapse">⏩ Time-lapse</div>
+<div id="day">☀️ Next day</div>
+<div id="dlg"><h5>www.linkedin.com says</h5><p>Accept 2,400 invitations?<br>It runs at a human pace (up to 1,500 a day) so LinkedIn doesn't block you. Keep this tab open.</p><div class="r"><span>Cancel</span><span class="ok" id="ok">OK</span></div></div>
+<div id="toast"><i>✓</i>2,400 invitations accepted</div>
+<div id="ring"></div>
+<svg id="cursor" viewBox="0 0 24 24"><path d="M4 2l15 11.5-6.6 1.2 3.9 7.3-2.9 1.5-3.9-7.4L4 21z" fill="#111" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+<div id="cap"></div>
+<div id="hook"><div class="n" id="hookn">0</div><div class="l1">LinkedIn invitations waiting?</div><div class="l2">Clicking Accept one by one takes hours.</div></div>
+<div id="end"><img src="../icons/icon128.png" alt=""><h1>LinkedIn Invites Helper</h1><p>Accept or ignore every invitation in one click, at a safe human pace.</p><div class="pill">Free on the Chrome Web Store</div></div>
+
+<script>
+const DURATION = 60;
+const $ = (id) => document.getElementById(id);
+const C = (x) => Math.min(1, Math.max(0, x));
+const k = (t, a, b) => C((t - a) / (b - a));
+const ease = (x) => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+const lerp = (a, b, x) => a + (b - a) * x;
+const fmt = (n) => Math.round(n).toLocaleString('en-US');
+const fade = (t, a, b, d = .35) => Math.min(k(t, a, a + d), 1 - k(t, b - d, b)); // visible in [a,b]
+
+// Fake people only — no real LinkedIn members.
+const PEOPLE = [
+  ['Sara Haddad', 'Product Designer at Northwind'], ['Omar Khalil', 'Software Engineer | Cloud & DevOps'],
+  ['Lina Park', 'Marketing Lead at Brightside'], ['Daniel Moore', 'Founder & CEO, Tidewater Labs'],
+  ['Aisha Rahman', 'Data Analyst | SQL · Python'], ['Marco Rossi', 'Sales Director, EMEA'],
+  ['Priya Nair', 'HR Business Partner'], ['Yusuf Ali', 'Cybersecurity Consultant'],
+  ['Emma Clarke', 'UX Researcher at Fable & Co'], ['Khalid Mansour', 'Project Manager, PMP'],
+  ['Hana Suzuki', 'Frontend Developer'], ['Lucas Silva', 'Growth Marketer'],
+  ['Noor Hassan', 'Recruiter at TalentBridge'], ['Ethan Brooks', 'Mobile Engineer, iOS'],
+  ['Mariam Saleh', 'Content Strategist'], ['Jonas Weber', 'Mechanical Engineer'],
+  ['Fatima Zahra', 'Business Analyst'], ['Ryan Chen', 'Machine Learning Engineer'],
+  ['Layla Aziz', 'Brand Manager'], ['Samuel Okoro', 'Financial Analyst'],
+  ['Zainab Musa', 'Operations Manager'], ['Victor Lindqvist', 'Solutions Architect'],
+  ['Rania Fares', 'Customer Success Lead'], ['Adam Novak', 'QA Engineer'],
+  ['Mei Lin', 'Graphic Designer'], ['Tariq Hamdan', 'Network Engineer, CCNA'],
+  ['Chloe Martin', 'Event Coordinator'], ['Ibrahim Yousef', 'Civil Engineer'],
+  ['Grace Kim', 'Product Manager'], ['Hassan Jaber', 'Backend Developer | Node.js']
+];
+const COLORS = ['#7a5af8', '#0a66c2', '#e16745', '#057642', '#b24020', '#5f9b41', '#915907', '#2e7d9a'];
+const CARD_H = 132;
+$('list').innerHTML = PEOPLE.map(([n, h], i) => `
+  <div class="inv"><div class="av" style="background:${COLORS[i % COLORS.length]}">${n.split(' ').map(w => w[0]).join('')}</div>
+  <div class="who"><b>${n} <span>wants to connect</span></b><p>${h}</p><small>${3 + (i * 7) % 40} mutual connections</small></div>
+  <div class="acts"><button class="b">Ignore</button><button class="b out">Accept</button></div></div>`).join('');
+
+const CAPTIONS = [
+  [5.4, 11.8, 'Accepting invitations one by one is slow and boring.'],
+  [12.2, 19.8, 'LinkedIn Invites Helper adds two buttons right here.'],
+  [20.2, 26.4, 'Click “Accept all”, confirm, and that’s it.'],
+  [26.8, 39.8, 'It works through every invitation for you.'],
+  [40.2, 46.6, 'Got thousands? It pauses at the daily limit.'],
+  [46.8, 51, 'Next day, click Continue and it picks up where it stopped.'],
+  [51.2, 55.6, 'No tracking. No servers. Works in English and Arabic.']
+];
+
+const panel = $('panel'), list = $('list');
+// zoom target = panel centre, measured once
+const pr = panel.getBoundingClientRect();
+const ORIGIN = [pr.left + pr.width / 2, pr.top + 38];
+// fill the 1080p frame: whole page scaled up from the top centre (measured above, before scaling)
+$('base').style.zoom = 1.3;
+const center = (el) => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+
+let btnKey = '';
+function panelState(t) {
+  if (t < 26.4) return { txt: '2,400 pending invitations', btns: [['Ignore all', ''], ['Accept all', 'pri']] };
+  if (t < 33) { const d = lerp(0, 700, k(t, 26.5, 33)); return { busy: 1, txt: `Accepting… ${fmt(d)} done · ${fmt(2400 - d)} left — keep this tab open`, btns: [['Stop', '']] }; }
+  if (t < 35.5) return { busy: 1, txt: 'Short break (1 min) to stay under LinkedIn’s limits', btns: [['Stop', '']] };
+  if (t < 40) { const d = lerp(700, 1500, k(t, 35.5, 40)); return { busy: 1, txt: `Accepting… ${fmt(d)} done · ${fmt(2400 - d)} left — keep this tab open`, btns: [['Stop', '']] }; }
+  if (t < 48.3) return { txt: 'Paused: 1,500 accepted. Daily limit reached (1,500). Continue tomorrow.', btns: [['Discard', ''], ['Continue', 'pri']] };
+  const d = lerp(1500, 2400, k(t, 48.3, 50.3));
+  return { busy: 1, txt: `Accepting… ${fmt(d)} done · ${fmt(2400 - d)} left — keep this tab open`, btns: [['Stop', '']] };
+}
+
+function seek(t) {
+  // hook
+  $('hookn').textContent = fmt(lerp(0, 2400, ease(k(t, .4, 3.4))));
+  $('hook').style.opacity = 1 - k(t, 4.6, 5.3);
+
+  // panel appears at 12s, slides open
+  const open = ease(k(t, 12, 12.7)) * (1 - k(t, 50.6, 51.1));
+  panel.style.height = 84 * open + 'px';
+  panel.style.opacity = open;
+  const s = panelState(t);
+  panel.classList.toggle('busy', !!s.busy);
+  $('sumtxt').textContent = s.txt;
+  const key = s.btns.map(b => b[0]).join();
+  if (key !== btnKey) { btnKey = key; $('btns').innerHTML = s.btns.map(([l, c]) => `<button class="b ${c}" data-l="${l}">${l}</button>`).join(''); }
+
+  // zoom on the panel 13–19.8s
+  const z = ease(k(t, 13, 14.2)) * (1 - ease(k(t, 18.6, 19.8)));
+  const cam = $('cam');
+  cam.style.transformOrigin = `${ORIGIN[0]}px ${ORIGIN[1]}px`;
+  cam.style.transform = `scale(${lerp(1, 1.2, z)})`;
+  panel.style.boxShadow = z > 0 ? `0 0 0 ${4 * z}px rgba(10,102,194,.45)` : '';
+
+  // invitations leave the list as they're handled
+  const p = 7 * k(t, 26.5, 33) + 5 * k(t, 35.5, 40) + 18 * k(t, 48.3, 50.3);
+  const i = Math.floor(p), f = p - i;
+  list.style.transform = `translateY(${-(i + ease(f)) * CARD_H}px)`;
+  [...list.children].forEach((c, j) => c.style.opacity = j < i ? 0 : j === i ? 1 - C(f * 2) : 1);
+  $('empty').style.opacity = k(t, 50.2, 50.6);
+
+  // overlays
+  $('safe').style.opacity = fade(t, 28, 39.8);
+  $('safe').querySelectorAll('li').forEach((li, j) => { const v = ease(k(t, 28.6 + j * 1.6, 29.2 + j * 1.6)); li.style.opacity = v; li.style.transform = `translateX(${(1 - v) * 30}px)`; });
+  $('lapse').style.opacity = Math.max(fade(t, 27, 39.8), fade(t, 48.4, 50.4));
+  $('day').style.opacity = fade(t, 46.4, 48.4);
+  const dl = fade(t, 22.7, 26.2, .25);
+  $('dlg').style.opacity = dl;
+  $('dlg').style.transform = `translateX(-50%) translateY(${(1 - dl) * -16}px)`;
+  const ts = fade(t, 50.6, 56.5);
+  $('toast').style.opacity = ts;
+  $('toast').style.transform = `translateY(${(1 - ts) * 20}px)`;
+
+  // caption
+  const cap = CAPTIONS.find(([a, b]) => t >= a && t < b);
+  $('cap').textContent = cap ? cap[2] : '';
+  const cv = cap ? fade(t, cap[0], cap[1], .3) : 0;
+  $('cap').style.opacity = cv;
+  $('cap').style.transform = `translateX(-50%) translateY(${(1 - cv) * 14}px)`;
+
+  // cursor
+  const btn = (l) => document.querySelector(`#btns [data-l="${l}"]`);
+  let pos = [1560, 960], vis = 0, click = 0;
+  if (t >= 20.2 && t < 27) {
+    const acc = btn('Accept all') ? center(btn('Accept all')) : [1500, 300];
+    const ok = center($('ok'));
+    vis = fade(t, 20.2, 26.9);
+    pos = t < 24 ? [lerp(1560, acc[0], ease(k(t, 20.4, 22.2))), lerp(960, acc[1], ease(k(t, 20.4, 22.2)))]
+                 : [lerp(acc[0], ok[0], ease(k(t, 24, 25.2))), lerp(acc[1], ok[1], ease(k(t, 24, 25.2)))];
+    click = Math.max(fade(t, 22.35, 22.75, .2), fade(t, 25.55, 25.95, .2));
+  } else if (t >= 46.6 && t < 49) {
+    const c = btn('Continue') ? center(btn('Continue')) : [1500, 300];
+    vis = fade(t, 46.6, 48.9);
+    pos = [lerp(1560, c[0], ease(k(t, 46.7, 47.8))), lerp(960, c[1], ease(k(t, 46.7, 47.8)))];
+    click = fade(t, 47.9, 48.3, .2);
+  }
+  $('cursor').style.opacity = vis;
+  $('cursor').style.transform = `translate(${pos[0] - 8}px, ${pos[1] - 4}px)`;
+  $('ring').style.opacity = click;
+  $('ring').style.left = pos[0] + 'px';
+  $('ring').style.top = pos[1] + 'px';
+  $('ring').style.transform = `scale(${.6 + click * .6})`;
+
+  // end card
+  const e = k(t, 55.6, 56.4);
+  $('end').style.opacity = e;
+  $('end').style.transform = `scale(${lerp(1.04, 1, ease(e))})`;
+}
+window.seek = seek;
+window.DURATION = DURATION;
+
+// Opened normally → plays in real time (preview). render.cjs adds ?render and drives seek().
+if (!location.search.includes('render')) {
+  const t0 = performance.now();
+  const loop = () => { seek(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); };
+  loop();
+} else seek(0);
+</script>
+</body>
+</html>
